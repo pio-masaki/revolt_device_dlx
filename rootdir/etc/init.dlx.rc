@@ -7,6 +7,7 @@ on init
     # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root  
+    mkdir /storage/usbdisk 0775 system system
    
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
@@ -17,6 +18,8 @@ on init
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+    symlink /storage/usbdisk /usbdisk
+    symlink /storage/usbdisk /mnt/usbdisk
 
     # NETWORK: NAT setting
     # To prevent out of WINDOW ACK from making
@@ -300,11 +303,6 @@ service mpdecision /system/bin/mpdecision --no_sleep --avg_comp
 	class core
 	user root
 	disabled
-
-#service adaptive /system/bin/adaptive -c 0 -s 150 -b 210
-#    class core
-#    user root
-#    disabled
 
 service kickstart /system/bin/qcks -1 modem_st1 -2 modem_st2 -3 radio_config -4 cdma_record -i /vendor/firmware/
 	class core
