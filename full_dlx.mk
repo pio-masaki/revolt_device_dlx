@@ -30,13 +30,13 @@ PRODUCT_COPY_FILES += device/htc/dlx/gps/gps.conf:system/etc/gps.conf
 PRODUCT_PACKAGES += \
     fstab.dlx \
     init.qcom.firmware_links.sh \
-    init.qcom.sh \
     init.dlx.rc \
     init.dlx.usb.rc \
     ueventd.dlx.rc
 
-PRODUCT_PACKAGES += \
-    libnetcmdiface
+# Post boot service
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/init.post_boot.sh:system/etc/init.post_boot.sh
 
 # Recovery
 PRODUCT_PACKAGES += \
@@ -45,6 +45,9 @@ PRODUCT_PACKAGES += \
     detect_key \
     offmode_charging \
     power_test
+
+PRODUCT_PACKAGES += \
+    libnetcmdiface
 
 # NFCEE access control
 ifeq ($(TARGET_BUILD_VARIANT),user)
@@ -58,7 +61,12 @@ PRODUCT_COPY_FILES += \
     $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml
+
+
+# QC thernald config
+PRODUCT_COPY_FILES += device/htc/dlx/configs/thermald.conf:/system/etc/thermald.conf
 
 # Media configs
 PRODUCT_COPY_FILES += device/htc/dlx/configs/AudioBTID.csv:system/etc/AudioBTID.csv
@@ -85,6 +93,11 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     device/htc/dlx/dsp/snd_soc_msm/snd_soc_msm_2x_Fusion3:/system/etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 
+
+# Wifi
+PRODUCT_COPY_FILES += \
+    device/htc/dlx/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
+    device/htc/dlx/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -133,10 +146,6 @@ PRODUCT_PACKAGES += \
         libgps.utils \
         gps.msm8960
 
-# Keystore
-PRODUCT_PACKAGES += \
-	keystore.msm8960
-
 # NFC
 PRODUCT_PACKAGES += \
     nfc.msm8960 \
@@ -150,42 +159,6 @@ PRODUCT_PACKAGES += \
 # Torch
 PRODUCT_PACKAGES += \
     Torch
-
-# Increase the HWUI font cache since we have tons of RAM
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.hwui.text_cache_width=2048
-
-# Extra properties
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.setupwizard.enable_bypass=1 \
-    dalvik.vm.lockprof.threshold=500 \
-    ro.com.google.locationfeatures=1 \
-    dalvik.vm.dexopt-flags=m=y \
-    ro.com.google.clientidbase=android-htc \
-    ro.com.google.clientidbase.yt=android-verizon \
-    ro.com.google.clientidbase.am=android-verizon \
-    ro.com.google.clientidbase.gmm=android-htc \
-    ro.com.google.clientidbase.ms=android-verizon \
-    gsm.sim.operator.alpha = Verizon \
-    gsm.sim.operator.numeric = 311480 \
-    gsm.sim.operator.iso-country = us \
-    gsm.operator.alpha = Verizon \
-    gsm.operator.numeric = 311480 \
-    gsm.operator.iso-country = us \
-    ro.cdma.home.operator.alpha = Verizon \
-    ro.cdma.home.operator.numeric = 311480 \
-    ro.cdma.data_retry_config=max_retries=infinite,0,0,60000,120000,480000,900000 \
-    ro.ril.set.mtusize=1428 \
-    persist.radio.snapshot_enabled=1 \
-    persist.radio.snapshot_timer=22 \
-    ro.config.multimode_cdma=1 \
-    ro.config.combined_signal=true \
-    ro.gsm.data_retry_config=max_retries=infinite,5000,5000,60000,120000,480000,900000 \
-    ro.opengles.version=196608 \
-    persist.eons.enabled=false
-
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp
 
 # We have enough space to hold precise GC data
 PRODUCT_TAGS += dalvik.gc.type-precise
