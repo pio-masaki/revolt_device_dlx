@@ -24,7 +24,7 @@ $(call inherit-product, device/htc/msm8960-common/msm8960.mk)
 $(call inherit-product, device/htc/dlx/device.mk)
 
 # The gps config appropriate for this device
-PRODUCT_COPY_FILES += device/common/gps/gps.conf_US_SUPL:system/etc/gps.conf
+PRODUCT_COPY_FILES += device/htc/dlx/gps/gps.conf:system/etc/gps.conf
 
 # Ramdisk
 PRODUCT_PACKAGES += \
@@ -38,14 +38,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libnetcmdiface
 
-# Custom Recovery and Charging
-PRODUCT_COPY_FILES += \
-    device/htc/dlx/recovery/sbin/choice_fn:recovery/root/sbin/choice_fn \
-    device/htc/dlx/recovery/sbin/detect_key:recovery/root/sbin/detect_key \
-    device/htc/dlx/recovery/sbin/offmode_charging:recovery/root/sbin/offmode_charging
-
-# Get the sample verizon list of APNs
-PRODUCT_COPY_FILES += device/sample/etc/apns-conf_verizon.xml:system/etc/apns-conf.xml
+# Recovery
+PRODUCT_PACKAGES += \
+    init.recovery.dlx.rc \
+    choice_fn \
+    detect_key \
+    offmode_charging \
+    power_test
 
 # NFCEE access control
 ifeq ($(TARGET_BUILD_VARIANT),user)
@@ -54,6 +53,8 @@ else
     NFCEE_ACCESS_PATH := device/htc/dlx/configs/nfcee_access_debug.xml
 endif
 PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
+    frameworks/native/data/etc/android.hardware.audio.low_latency.xml:system/etc/permissions/android.hardware.audio.low_latency.xml \
     $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml \
     frameworks/base/nfc-extras/com.android.nfc_extras.xml:system/etc/permissions/com.android.nfc_extras.xml \
     frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml \
@@ -62,11 +63,6 @@ PRODUCT_COPY_FILES += \
 # Media configs
 PRODUCT_COPY_FILES += device/htc/dlx/configs/AudioBTID.csv:system/etc/AudioBTID.csv
 PRODUCT_COPY_FILES += device/htc/dlx/configs/AudioBTIDnew.csv:system/etc/AudioBTIDnew.csv
-PRODUCT_COPY_FILES += device/htc/dlx/configs/audio_effects.conf:system/etc/audio_effects.conf
-
-# vold config
-PRODUCT_COPY_FILES += \
-    device/htc/dlx/configs/vold.fstab:system/etc/vold.fstab
 
 # wifi config
 PRODUCT_COPY_FILES += \
@@ -89,6 +85,10 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     device/htc/dlx/dsp/snd_soc_msm/snd_soc_msm_2x_Fusion3:/system/etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 
+
+# Media
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml
 
 # Keylayouts and Keychars
 PRODUCT_COPY_FILES += \
@@ -117,6 +117,10 @@ PRODUCT_COPY_FILES += \
     device/htc/dlx/idc/qwerty.idc:system/usr/idc/qwerty.idc \
     device/htc/dlx/idc/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc
 
+# Audio
+PRODUCT_PACKAGES += \
+	libaudioamp
+
 # Camera
 PRODUCT_PACKAGES += \
 	camera.msm8960
@@ -128,6 +132,10 @@ PRODUCT_PACKAGES += \
         libloc_api_v02 \
         libgps.utils \
         gps.msm8960
+
+# Keystore
+PRODUCT_PACKAGES += \
+	keystore.msm8960
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -142,11 +150,6 @@ PRODUCT_PACKAGES += \
 # Torch
 PRODUCT_PACKAGES += \
     Torch
-
-# Permissions
-PRODUCT_COPY_FILES += \
-        frameworks/native/data/etc/android.hardware.telephony.cdma.xml:system/etc/permissions/android.hardware.telephony.cdma.xml \
-        frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
 
 # Increase the HWUI font cache since we have tons of RAM
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -178,6 +181,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.multimode_cdma=1 \
     ro.config.combined_signal=true \
     ro.gsm.data_retry_config=max_retries=infinite,5000,5000,60000,120000,480000,900000 \
+    ro.opengles.version=196608 \
     persist.eons.enabled=false
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \

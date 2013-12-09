@@ -136,7 +136,7 @@
 /dev/qmi2                 0640   radio      radio
 /dev/bus/usb/*            0660   root       usb
 /dev/gemini*              0660   system     camera
-/dev/rawchip0             0660   system     system
+/dev/rawchip0             0660   system     camera
 /dev/mtp_usb              0660   root       mtp
 /dev/mdm                  0660   system     radio
 /dev/ttyHSL1              0660   system     system
@@ -201,6 +201,11 @@
 # dlx NFC
 /dev/pn544                0600  nfc          nfc
 
+# Audio
+/dev/rt5501               0666  system       audio
+/dev/tfa9887              0666  system       audio
+/dev/tfa9887l             0666  system       audio
+
 # USB peripheral
 /dev/bus/usb/*            0660  root         usb
 /dev/mtp_usb              0660  root         mtp
@@ -252,3 +257,6 @@
 
 # for autobot car pc
 /dev/ttyHSUSB3                                 0660    autobot_access autobot_access
+
+# keystore
+/dev/qseecom                                   0660     system  drmrpc
